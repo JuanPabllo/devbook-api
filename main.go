@@ -10,9 +10,9 @@ import (
 
 func main() {
 	config.Load()
-	fmt.Println("Server is running on port:", config.Port)
 
 	router := router.Generate()
 
+	fmt.Printf("Server is running on port: %d", config.Port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", config.Port), router))
 }
