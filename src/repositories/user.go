@@ -95,3 +95,18 @@ func (repositories user) SearchById(userID uint64) (models.User, error) {
 
 	return user, nil
 }
+
+func (repositories user) Update(userID uint64, user models.User) error {
+	statement, erro := repositories.db.Prepare("update users set name = ?, nick = ?, email = ? where id = ?")
+	if erro != nil {
+		fmt.Println("erro 3")
+		return erro
+	}
+	defer statement.Close()
+
+	if _, erro = statement.Exec(user.Name, user.Nick, user.Email, userID); erro != nil {
+		return erro
+	}
+
+	return nil
+}
