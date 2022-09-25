@@ -1,13 +1,28 @@
 CREATE DATABASE IF NOT EXISTS devbook;
 USE devbook;
 
+DROP TABLE IF EXISTS followers;
 DROP TABLE IF EXISTS users;
 
-CREATE TABLE users (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(50) NOT NULL,
-  nick VARCHAR(50) NOT NULL UNIQUE,
-  email VARCHAR(50) NOT NULL UNIQUE,
-  password VARCHAR(100) NOT NULL,
-  CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP()
+CREATE TABLE users(
+    id int auto_increment primary key,
+    name varchar(50) not null,
+    nick varchar(50) not null unique,
+    email varchar(50) not null unique,
+    password varchar(100) not null,
+    createdAt timestamp default current_timestamp()
+) ENGINE=INNODB;
+
+CREATE TABLE followers(
+    user_id int not null,
+    FOREIGN KEY (user_id)
+    REFERENCES users(id)
+    ON DELETE CASCADE,
+
+    follower_id int not null,
+    FOREIGN KEY (follower_id)
+    REFERENCES users(id)
+    ON DELETE CASCADE,
+
+    primary key(user_id, follower_id)
 ) ENGINE=INNODB;
