@@ -16,7 +16,7 @@ var routersUsers = []Router{
 		URL:                    "/users",
 		Method:                 http.MethodGet,
 		Function:               controllers.SearchUsers,
-		RequeredAuthentication: false,
+		RequeredAuthentication: true,
 	},
 	{
 		URL:                    "/users/{userId}",
