@@ -22,18 +22,18 @@ var routersUsers = []Router{
 		URL:                    "/users/{userId}",
 		Method:                 http.MethodGet,
 		Function:               controllers.SearchUserById,
-		RequeredAuthentication: false,
+		RequeredAuthentication: true,
 	},
 	{
 		URL:                    "/users/{userId}",
 		Method:                 http.MethodPut,
 		Function:               controllers.UpdateUserbyId,
-		RequeredAuthentication: false,
+		RequeredAuthentication: true,
 	},
 	{
 		URL:                    "/users/{userId}",
 		Method:                 http.MethodDelete,
 		Function:               controllers.DeleteUserById,
-		RequeredAuthentication: false,
+		RequeredAuthentication: true,
 	},
 }
