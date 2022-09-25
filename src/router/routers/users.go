@@ -60,4 +60,10 @@ var routersUsers = []Router{
 		Function:               controllers.SearchFollowing,
 		RequeredAuthentication: true,
 	},
+	{
+		URL:                    "/users/{userId}/update-password",
+		Method:                 http.MethodPost,
+		Function:               controllers.UpdatePassword,
+		RequeredAuthentication: true,
+	},
 }
