@@ -1,12 +1,14 @@
 package controllers
 
 import (
+	"api/src/auth"
 	"api/src/database"
 	"api/src/models"
 	"api/src/repositories"
 	"api/src/responses"
 	"api/src/security"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 )
@@ -44,5 +46,6 @@ func Login(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	res.Write([]byte("Logado com sucesso!"))
+	token, _ := auth.CreateToken(userSaveInDB.ID)
+	res.Write([]byte(fmt.Sprintf(`{"token": "%s"}`, token)))
 }
