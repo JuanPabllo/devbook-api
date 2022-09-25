@@ -46,6 +46,11 @@ func Login(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	token, _ := auth.CreateToken(userSaveInDB.ID)
+	token, erro := auth.CreateToken(userSaveInDB.ID)
+	if erro != nil {
+		responses.Error(res, http.StatusInternalServerError, erro)
+		return
+	}
+
 	res.Write([]byte(fmt.Sprintf(`{"token": "%s"}`, token)))
 }
