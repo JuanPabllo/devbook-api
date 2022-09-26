@@ -9,6 +9,9 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"strconv"
+
+	"github.com/gorilla/mux"
 )
 
 func CreatePosts(req http.ResponseWriter, res *http.Request) {
@@ -56,7 +59,29 @@ func CreatePosts(req http.ResponseWriter, res *http.Request) {
 
 func GetPosts(req http.ResponseWriter, res *http.Request) {}
 
-func GetPostByID(req http.ResponseWriter, res *http.Request) {}
+func GetPostByID(req http.ResponseWriter, res *http.Request) {
+	params := mux.Vars(res)
+	postID, erro := strconv.ParseUint(params["postID"], 10, 64)
+	if erro != nil {
+		responses.Error(req, http.StatusBadRequest, erro)
+		return
+	}
+	db, erro := database.Connect()
+	if erro != nil {
+		responses.Error(req, http.StatusInternalServerError, erro)
+		return
+	}
+	defer db.Close()
+
+	repositorie := repositories.NewPostsRepository(db)
+	post, erro := repositorie.GetPostByID(postID)
+	if erro != nil {
+		responses.Error(req, http.StatusInternalServerError, erro)
+		return
+	}
+
+	responses.JSON(req, http.StatusOK, post)
+}
 
 func UpdatePost(req http.ResponseWriter, res *http.Request) {}
 
