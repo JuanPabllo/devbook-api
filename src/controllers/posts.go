@@ -57,7 +57,29 @@ func CreatePosts(req http.ResponseWriter, res *http.Request) {
 	responses.JSON(req, http.StatusCreated, posts)
 }
 
-func GetPosts(req http.ResponseWriter, res *http.Request) {}
+func GetPosts(req http.ResponseWriter, res *http.Request) {
+	userID, erro := auth.ExtractUserID(res)
+	if erro != nil {
+		responses.Error(req, http.StatusUnauthorized, erro)
+		return
+	}
+
+	db, erro := database.Connect()
+	if erro != nil {
+		responses.Error(req, http.StatusInternalServerError, erro)
+		return
+	}
+	defer db.Close()
+
+	repositorie := repositories.NewPostsRepository(db)
+	posts, erro := repositorie.SearchPosts(userID)
+	if erro != nil {
+		responses.Error(req, http.StatusInternalServerError, erro)
+		return
+	}
+
+	responses.JSON(req, http.StatusOK, posts)
+}
 
 func GetPostByID(req http.ResponseWriter, res *http.Request) {
 	params := mux.Vars(res)
