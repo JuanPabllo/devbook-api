@@ -165,4 +165,44 @@ func UpdatePost(req http.ResponseWriter, res *http.Request) {
 	responses.JSON(req, http.StatusNoContent, nil)
 }
 
-func DeletePost(req http.ResponseWriter, res *http.Request) {}
+func DeletePost(req http.ResponseWriter, res *http.Request) {
+	userID, erro := auth.ExtractUserID(res)
+	if erro != nil {
+		responses.Error(req, http.StatusUnauthorized, erro)
+		return
+	}
+
+	params := mux.Vars(res)
+	postID, erro := strconv.ParseUint(params["postID"], 10, 64)
+	if erro != nil {
+		responses.Error(req, http.StatusBadRequest, erro)
+		return
+	}
+
+	db, erro := database.Connect()
+	if erro != nil {
+		responses.Error(req, http.StatusInternalServerError, erro)
+		return
+	}
+	defer db.Close()
+
+	repositorie := repositories.NewPostsRepository(db)
+	postSaveInDB, erro := repositorie.GetPostByID(postID)
+	if erro != nil {
+		responses.Error(req, http.StatusInternalServerError, erro)
+		return
+	}
+
+	if postSaveInDB.AuthorID != userID {
+		responses.Error(req, http.StatusForbidden, errors.New("you can not delete this post"))
+		return
+	}
+
+	if erro = repositorie.Delete(postID); erro != nil {
+		responses.Error(req, http.StatusInternalServerError, erro)
+		return
+	}
+
+	responses.JSON(req, http.StatusNoContent, nil)
+
+}
