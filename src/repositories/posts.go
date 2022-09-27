@@ -99,3 +99,19 @@ func (repositorie Posts) SearchPosts(postID uint64) ([]models.Posts, error) {
 
 	return posts, nil
 }
+
+func (repositorie Posts) Update(postID uint64, post models.Posts) error {
+	statement, erro := repositorie.db.Prepare("update posts set title = ?, content = ? where id = ?")
+	if erro != nil {
+		return erro
+	}
+	defer statement.Close()
+
+	if _, erro = statement.Exec(post.Title, post.Content, postID); erro != nil {
+		return erro
+	}
+
+	return nil
+}
+
+// func (repositorie Posts) Delete(postID uint64) error {}
