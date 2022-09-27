@@ -254,3 +254,27 @@ func LikePost(req http.ResponseWriter, res *http.Request) {
 
 	responses.JSON(req, http.StatusNoContent, nil)
 }
+
+func DislikePost(req http.ResponseWriter, res *http.Request) {
+	params := mux.Vars(res)
+	postID, erro := strconv.ParseUint(params["postID"], 10, 64)
+	if erro != nil {
+		responses.Error(req, http.StatusBadRequest, erro)
+	}
+
+	db, erro := database.Connect()
+
+	if erro != nil {
+		responses.Error(req, http.StatusInternalServerError, erro)
+		return
+	}
+	defer db.Close()
+
+	repositorie := repositories.NewPostsRepository(db)
+	if erro := repositorie.Dislike(postID); erro != nil {
+		responses.Error(req, http.StatusInternalServerError, erro)
+		return
+	}
+
+	responses.JSON(req, http.StatusNoContent, nil)
+}
