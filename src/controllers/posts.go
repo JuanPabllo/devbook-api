@@ -230,3 +230,27 @@ func GetPostsByUser(req http.ResponseWriter, res *http.Request) {
 
 	responses.JSON(req, http.StatusOK, posts)
 }
+
+func LikePost(req http.ResponseWriter, res *http.Request) {
+	params := mux.Vars(res)
+	postID, erro := strconv.ParseUint(params["postID"], 10, 64)
+	if erro != nil {
+		responses.Error(req, http.StatusBadRequest, erro)
+		return
+	}
+
+	db, erro := database.Connect()
+	if erro != nil {
+		responses.Error(req, http.StatusInternalServerError, erro)
+		return
+	}
+	defer db.Close()
+
+	repositorie := repositories.NewPostsRepository(db)
+	if erro := repositorie.Like(postID); erro != nil {
+		responses.Error(req, http.StatusInternalServerError, erro)
+		return
+	}
+
+	responses.JSON(req, http.StatusNoContent, nil)
+}
